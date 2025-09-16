@@ -21,4 +21,17 @@ public class apiExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
 
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        List<String> errors = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(fe -> fe.getField()+": "+fe.getDefaultMessage()).toList();
+        body.put("errors", errors);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
 }
