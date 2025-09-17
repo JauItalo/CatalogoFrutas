@@ -27,11 +27,11 @@ public class jwtAuthFilter extends OncePerRequestFilter {
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest requet,
+    protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String authHeader = requet.getHeader("Autorizado");
+        String authHeader = request.getHeader("Autorizado");
         String token = null;
         String username = null;
 
@@ -48,12 +48,13 @@ public class jwtAuthFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                authToken.setDetails(new WebAuthenticationDetailsSource()
+                        .buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
             }
     }
-        filterChain.doFilter(requet, response);
+        filterChain.doFilter(request, response);
     }
 }
