@@ -2,15 +2,15 @@ package com.example.catalogo.config;
 
 
 import com.example.catalogo.security.jwtAuthFilter;
-import com.example.catalogo.security.jwtAuthentication;
 import com.example.catalogo.service.customUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,15 +19,35 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 
 @Configuration
-@EnableMethodSecurity
 public class SecurityConfig {
 
-    @Autowired private jwtAuthFilter jwtAuthFilter;
-    @Autowired private jwtAuthentication jwtAuthentication;
-    @Autowired private customUserService customUserService;
+    private final jwtAuthFilter jwtAuthFilter;
+
+    public SecurityConfig(jwtAuthFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session ->session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
+                        .requestMatchers("/api/v1/frutas/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .exceptionHandling(ex-> ex.authenticationEntryPoint((req, res, excep) -> {
+                    res.sendError(res.SC_UNAUTHORIZED, "Não Autorizado");
+                }))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 
+        http.headers(headers ->headers.frameOptions(frame -> frame.disable()));
 
+        return http.build();
+
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration cofig)
@@ -41,18 +61,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http)
-        throws Exception {
-        http.csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(jwtAuthentication).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "h2-console/**").permitAll()
-                .requestMatchers("/api/v1/frutas/**").permitAll()
-                .anyRequest().authenticated();
-
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        http.headers().frameOptions().disable();
-        return http.build();
+    public AuthenticationProvider authenticationProvider(customUserService customUserService) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(customUserService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
     }
 }
