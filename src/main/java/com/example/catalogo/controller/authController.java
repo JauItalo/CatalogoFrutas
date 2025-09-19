@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
@@ -21,7 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 
 @RestController
-@RequestMapping("api/v1/auth")
+@RequestMapping("/api/v1/auth")
 public class authController {
 
     @Autowired private AuthenticationManager authenticationManager;
@@ -52,9 +53,15 @@ public class authController {
    public ResponseEntity<?> login(@RequestBody loginRequestDTO req){
        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                req.getUsername(), req.getPassword()));
-       List<String> roles = auth.getAuthorities().stream().map(a -> a.getAuthority())
+
+
+       UserDetails userDetails = (UserDetails) auth.getPrincipal();
+       String token = jwtUtil.generateToken(userDetails);
+
+       List<String> roles = userDetails.getAuthorities()
+               .stream()
+               .map(a -> a.getAuthority())
                .collect(Collectors.toList());
-       String token = jwtUtil.generateToken(req.getUsername(), roles);
        return ResponseEntity.ok(new loginResponseDTO(token, req.getUsername(), roles));
    }
 

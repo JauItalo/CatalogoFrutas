@@ -5,7 +5,6 @@ import com.example.catalogo.dto.frutasRequestDTO;
 import com.example.catalogo.dto.frutasResponseDTO;
 import com.example.catalogo.model.Tipos;
 import com.example.catalogo.service.frutasService;
-import jakarta.servlet.http.PushBuilder;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -35,7 +34,7 @@ public class frutasController {
 
     @GetMapping("/raras")
     public ResponseEntity<List<frutasResponseDTO>> raras() {
-        return ResponseEntity.ok(service,listRaras());
+        return ResponseEntity.ok(service.listRaras());
     }
 
     @GetMapping("/{id}")
@@ -56,7 +55,7 @@ public class frutasController {
         return ResponseEntity.ok(service.update(id,dto));
     }
     @PatchMapping("/{id}/transfer")
-    @PreAuthorize("hasRoles('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<frutasResponseDTO> transfer(@PathVariable Long id,
                                                       @RequestBody java.util.Map<String, String> body) {
         String novo = body.get("novoUsuario");
