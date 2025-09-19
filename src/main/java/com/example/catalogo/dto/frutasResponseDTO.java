@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class frutasResponseDTO {
     private Long id;
     private String nome;
-    private frutasModel tipo;
+    private Tipos tipo;
     private String descricao;
     private String resumopoder;
     private String usuarioAtual;
@@ -32,7 +32,7 @@ public class frutasResponseDTO {
         this.nome = nome;
     }
 
-    public frutasModel getTipo() {
+    public Tipos getTipo() {
         return tipo;
     }
 

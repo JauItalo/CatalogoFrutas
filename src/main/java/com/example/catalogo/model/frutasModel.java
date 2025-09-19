@@ -14,7 +14,7 @@ public class frutasModel {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Tipos tipos;
+    private Tipos tipo;
 
     @Column(columnDefinition = "TEXT")
     private String descricao;
@@ -43,12 +43,12 @@ public class frutasModel {
         this.nome = nome;
     }
 
-    public Tipos getTipos() {
-        return tipos;
+    public Tipos getTipo() {
+        return tipo;
     }
 
-    public void setTipos(Tipos tipos) {
-        this.tipos = tipos;
+    public void setTipo(Tipos tipo) {
+        this.tipo = tipo;
     }
 
     public String getDescricao() {

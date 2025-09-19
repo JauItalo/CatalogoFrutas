@@ -7,7 +7,6 @@ import com.example.catalogo.exception.ResourceNotFoundException;
 import com.example.catalogo.model.frutasModel;
 import com.example.catalogo.model.Tipos;
 import com.example.catalogo.repository.frutasRepository;
-import com.example.catalogo.service.frutasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,14 +25,14 @@ public class frutasServiceImpl implements frutasService {
 
     private frutasResponseDTO toDTO(frutasModel e) {
         frutasResponseDTO r = new frutasResponseDTO();
-        r.setId(e.getId()); r.setNome(e.getNome()); r.setTipo(e.getTipos());
+        r.setId(e.getId()); r.setNome(e.getNome()); r.setTipo(e.getTipo());
         r.setDescricao(e.getDescricao()); r.setResumopoder(e.getResumoPoder());
         r.setUsuarioAtual(e.getUsuarioAtual()); r.setUsuarioAnterior(e.getUsuarioAnterior());
         r.setDataDescoberta(e.getDataDescoberta()); r.setRaro(e.isRaro());
         return r;
     }
     private void apply(frutasModel e, frutasRequestDTO dto) {
-        e.setNome(dto.getNome()); e.setTipos(dto.getTiposModel()); e.setDescricao(dto.getDescricao());
+        e.setNome(dto.getNome()); e.setTipo(dto.getTiposModel()); e.setDescricao(dto.getDescricao());
         e.setResumoPoder(dto.getResumoPoder()); e.setUsuarioAtual(dto.getUsuarioAtual()); e.setRaro(dto.isRaro());
         if (e.getDataDescoberta() == null) e.setDataDescoberta(LocalDateTime.now());
     }

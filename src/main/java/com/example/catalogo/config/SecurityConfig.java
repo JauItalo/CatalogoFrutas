@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 
 @Configuration
@@ -26,37 +28,42 @@ public class SecurityConfig {
     public SecurityConfig(jwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
     }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector
+            introspector) throws Exception {
+        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher
+                .Builder(introspector);
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session ->session.sessionCreationPolicy(
+                .sessionManagement(session -> session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/h2-console/**").permitAll()
-                        .requestMatchers("/api/v1/frutas/**").permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/api/v1/auth/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/v3/api-docs/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui.html")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.servletPath("/h2-console").pattern("/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/api/v1/frutas/**")).permitAll()
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(ex-> ex.authenticationEntryPoint((req, res, excep) -> {
+                .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, excep) -> {
                     res.sendError(res.SC_UNAUTHORIZED, "Não Autorizado");
                 }))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-
-        http.headers(headers ->headers.frameOptions(frame -> frame.disable()));
-
+        http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
         return http.build();
-
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration cofig)
-        throws Exception{
-        return cofig.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+            throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

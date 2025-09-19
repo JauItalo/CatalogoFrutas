@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface frutasRepository extends JpaRepository<frutasModel, Long> {
     Optional<frutasModel> findByNomeIgnoreCase(String nome);
-    Page<frutasModel> findByTipo(Tipos tipos, Pageable pageable);
+    Page<frutasModel> findByTipo(Tipos tipo, Pageable pageable);
     Page<frutasModel> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
     List<frutasModel> findByRaroTrue();
 
