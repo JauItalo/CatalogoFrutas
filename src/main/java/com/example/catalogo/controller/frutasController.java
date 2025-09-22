@@ -63,7 +63,7 @@ public class frutasController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRoles('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
