@@ -1,6 +1,5 @@
 package com.example.catalogo.config;
 
-
 import com.example.catalogo.security.jwtAuthFilter;
 import com.example.catalogo.service.customUserService;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-
 @Configuration
 public class SecurityConfig {
 
@@ -30,29 +28,33 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector
-            introspector) throws Exception {
-        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher
-                .Builder(introspector);
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           HandlerMappingIntrospector introspector) throws Exception {
+
+        MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspector);
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(mvcMatcherBuilder.pattern("/api/v1/auth/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/v3/api-docs/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui.html")).permitAll()
-                        .requestMatchers(mvcMatcherBuilder.servletPath("/h2-console").pattern("/**")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder
+                                .servletPath("/h2-console")
+                                .pattern("/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/api/v1/frutas/**")).permitAll()
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(ex -> ex.authenticationEntryPoint((req, res, excep) -> {
-                    res.sendError(res.SC_UNAUTHORIZED, "Não Autorizado");
-                }))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                        (req, res, excep) -> res.sendError(res.SC_UNAUTHORIZED, "Não Autorizado")
+                ))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
+
         return http.build();
     }
 

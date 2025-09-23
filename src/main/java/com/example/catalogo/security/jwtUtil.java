@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -19,17 +20,22 @@ public class jwtUtil {
     private String SECRET_KEY;
 
     private Key getSigninKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        byte[] keyBytes =  SECRET_KEY.getBytes();
+        if (keyBytes.length < 32) {
+            keyBytes = Arrays.copyOf(keyBytes, 32);
+        }
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // ========================= EXTRAÇÃO =========================
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
-        return claims.get("roles", List.class);
+        @SuppressWarnings("unchecked")
+                List<String>roles = claims.get("roles", List.class);
+        return roles != null ? roles : new ArrayList<>();
     }
 
     public Date extractExpiration(String token) {
@@ -57,7 +63,7 @@ public class jwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", userDetails.getAuthorities()
                 .stream()
-                .map(a -> a.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .toList());
 
         return createToken(claims, userDetails.getUsername());
