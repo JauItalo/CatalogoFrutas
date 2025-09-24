@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class frutasRequestDTO {
+public class FrutasRequestDTO {
 
     @NotBlank @Size(max=100) private String nome;
     @NotNull private Tipos tipos;

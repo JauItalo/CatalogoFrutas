@@ -9,7 +9,7 @@ import java.util.*;
 
 
 @ControllerAdvice
-public class apiExceptionHandler {
+public class ApiExceptionHandler {
 
 
     @ExceptionHandler(ResourceNotFoundException.class)

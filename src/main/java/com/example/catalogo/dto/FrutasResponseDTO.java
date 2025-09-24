@@ -1,31 +1,20 @@
-package com.example.catalogo.model;
+package com.example.catalogo.dto;
 
-import jakarta.persistence.*;
+import com.example.catalogo.model.Tipos;
+
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "frutas")
-public class frutasModel {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class FrutasResponseDTO {
     private Long id;
-
-    @Column(nullable = false, unique = true)
     private String nome;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Tipos tipo;
-
-    @Column(columnDefinition = "TEXT")
     private String descricao;
-
-    @Column(name = "resumo_poder")
-    private String resumoPoder;
-
+    private String resumopoder;
     private String usuarioAtual;
     private String usuarioAnterior;
     private LocalDateTime dataDescoberta;
     private boolean raro;
+
 
     public Long getId() {
         return id;
@@ -59,12 +48,12 @@ public class frutasModel {
         this.descricao = descricao;
     }
 
-    public String getResumoPoder() {
-        return resumoPoder;
+    public String getResumopoder() {
+        return resumopoder;
     }
 
-    public void setResumoPoder(String resumoPoder) {
-        this.resumoPoder = resumoPoder;
+    public void setResumopoder(String resumopoder) {
+        this.resumopoder = resumopoder;
     }
 
     public String getUsuarioAtual() {

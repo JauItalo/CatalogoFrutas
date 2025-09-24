@@ -1,7 +1,6 @@
 package com.example.catalogo.service;
 
-import com.example.catalogo.model.User;
-import com.example.catalogo.repository.userRepository;
+import com.example.catalogo.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,10 +8,10 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class customUserService implements UserDetailsService {
-    private final userRepository userRepository;
+public class CustomUserService implements UserDetailsService {
+    private final UserRepository userRepository;
 
-    public customUserService(userRepository userRepository){
+    public CustomUserService(UserRepository userRepository){
         this.userRepository = userRepository;
     }
 

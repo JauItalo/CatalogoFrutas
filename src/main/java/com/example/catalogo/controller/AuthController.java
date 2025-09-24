@@ -3,9 +3,9 @@ package com.example.catalogo.controller;
 import com.example.catalogo.dto.*;
 import com.example.catalogo.model.Role;
 import com.example.catalogo.model.User;
-import com.example.catalogo.repository.roleRepository;
-import com.example.catalogo.repository.userRepository;
-import com.example.catalogo.security.jwtUtil;
+import com.example.catalogo.repository.RoleRepository;
+import com.example.catalogo.repository.UserRepository;
+import com.example.catalogo.security.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,25 +21,25 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-public class authController {
+public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private jwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
     @Autowired
-    private userRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private roleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody userRegisterDTO dto) {
+    public ResponseEntity<?> register(@Valid @RequestBody UserRegisterDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername()))
             return ResponseEntity.badRequest().body("Username em uso");
 
@@ -61,7 +61,7 @@ public class authController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody loginRequestDTO req) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO req) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
         );
@@ -74,7 +74,7 @@ public class authController {
                 .map(a -> a.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new loginResponseDTO(token, req.getUsername(), roles));
+        return ResponseEntity.ok(new LoginResponseDTO(token, req.getUsername(), roles));
     }
 
     @GetMapping("/me")

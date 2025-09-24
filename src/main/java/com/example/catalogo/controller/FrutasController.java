@@ -1,10 +1,10 @@
 package com.example.catalogo.controller;
 
 
-import com.example.catalogo.dto.frutasRequestDTO;
-import com.example.catalogo.dto.frutasResponseDTO;
+import com.example.catalogo.dto.FrutasRequestDTO;
+import com.example.catalogo.dto.FrutasResponseDTO;
 import com.example.catalogo.model.Tipos;
-import com.example.catalogo.service.frutasService;
+import com.example.catalogo.service.FrutasService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -17,12 +17,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/frutas")
-public class frutasController {
+public class FrutasController {
 
-    @Autowired private frutasService service;
+    @Autowired private FrutasService service;
 
     @GetMapping
-    public ResponseEntity<Page<frutasResponseDTO>> list(
+    public ResponseEntity<Page<FrutasResponseDTO>> list(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) Tipos tipos,
@@ -33,30 +33,30 @@ public class frutasController {
     }
 
     @GetMapping("/raras")
-    public ResponseEntity<List<frutasResponseDTO>> raras() {
+    public ResponseEntity<List<FrutasResponseDTO>> raras() {
         return ResponseEntity.ok(service.listRaras());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<frutasResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<FrutasResponseDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<frutasResponseDTO> create(@Valid @RequestBody frutasRequestDTO dto) {
-        frutasResponseDTO created = service.create(dto);
+    public ResponseEntity<FrutasResponseDTO> create(@Valid @RequestBody FrutasRequestDTO dto) {
+        FrutasResponseDTO created = service.create(dto);
         return ResponseEntity.created(URI.create("/api/v1/frutas" + created.getId())).body(created);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<frutasResponseDTO> update(@PathVariable Long id, @Valid @RequestBody frutasRequestDTO dto){
+    public ResponseEntity<FrutasResponseDTO> update(@PathVariable Long id, @Valid @RequestBody FrutasRequestDTO dto){
         return ResponseEntity.ok(service.update(id,dto));
     }
     @PatchMapping("/{id}/transfer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<frutasResponseDTO> transfer(@PathVariable Long id,
+    public ResponseEntity<FrutasResponseDTO> transfer(@PathVariable Long id,
                                                       @RequestBody java.util.Map<String, String> body) {
         String novo = body.get("novoUsuario");
         return ResponseEntity.ok(service.transferirUsuario(id, novo));

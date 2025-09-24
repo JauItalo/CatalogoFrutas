@@ -2,13 +2,13 @@ package com.example.catalogo.dto;
 
 import java.util.List;
 
-public class loginResponseDTO {
+public class LoginResponseDTO {
 
     private String token;
     private String username;
     private List<String> roles;
 
-    public loginResponseDTO(String token, String username, List<String> roles){
+    public LoginResponseDTO(String token, String username, List<String> roles){
         this.token = token;
         this.username = username;
         this.roles = roles;

@@ -1,7 +1,7 @@
 package com.example.catalogo.config;
 
-import com.example.catalogo.security.jwtAuthFilter;
-import com.example.catalogo.service.customUserService;
+import com.example.catalogo.security.JwtAuthFilter;
+import com.example.catalogo.service.CustomUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,9 +21,9 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @Configuration
 public class SecurityConfig {
 
-    private final jwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(jwtAuthFilter jwtAuthFilter) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
     }
 
@@ -70,7 +70,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(customUserService customUserService) {
+    public AuthenticationProvider authenticationProvider(CustomUserService customUserService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(customUserService);
         authProvider.setPasswordEncoder(passwordEncoder());

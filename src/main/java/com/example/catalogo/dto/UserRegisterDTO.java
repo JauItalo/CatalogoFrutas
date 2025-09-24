@@ -3,7 +3,7 @@ package com.example.catalogo.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class userRegisterDTO {
+public class UserRegisterDTO {
     @NotBlank private String nome;
     @NotBlank private String username;
     @NotBlank @Size(min=6) private String password;

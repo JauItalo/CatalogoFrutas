@@ -1,6 +1,6 @@
 package com.example.catalogo.security;
 
-import com.example.catalogo.service.customUserService;
+import com.example.catalogo.service.CustomUserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,13 +16,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class jwtAuthFilter extends OncePerRequestFilter {
+public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
-    private jwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
     @Autowired
-    private customUserService customUserService;
+    private CustomUserService customUserService;
 
 
     @Override
