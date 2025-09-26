@@ -26,7 +26,6 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    // 🔑 Relação com a tabela roles
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
